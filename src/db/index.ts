@@ -1,7 +1,7 @@
 import { Client, Databases, ID } from "appwrite";
-const projectId = "6559b0b25b08b44fad56";
-const dbId = "6559b13d7e11bdb37e8c";
-const collectionId = "6559b18e3b603d0f267b";
+const projectId = import.meta.env.VITE_PROJECT_ID;
+const dbId = import.meta.env.VITE_DB_ID;
+const collectionId = import.meta.env.VITE_COLLECTION_ID;
 
 const client = new Client();
 client.headers = {
