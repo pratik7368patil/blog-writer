@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { createNewBlog } from "./../db/index";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
+// import { useRouter } from "vue-router";
+// const router = useRouter();
 
 async function createNewBlankPost() {
   const timestamp = new Date().toString();
@@ -10,7 +9,6 @@ async function createNewBlankPost() {
     title: `Untitled-${timestamp}`,
     body: [],
   });
-
   console.log(newBlog);
 }
 </script>
