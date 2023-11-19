@@ -46,7 +46,7 @@ onMounted(() => {
     },
     onReady: () => {
       editor.value.render({
-        blocks: JSON.parse(props.body),
+        blocks: JSON.parse(props.body || "[]"),
       });
     },
     onChange: (api: any, event: any) =>

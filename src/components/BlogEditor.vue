@@ -8,8 +8,7 @@ import { computed, onMounted, ref } from "vue";
 const updatedContent = ref<string>("");
 async function onChange(__: any, _: any, instance: any) {
   const data = await instance.save();
-  console.log(JSON.stringify(data));
-  updatedContent.value = JSON.stringify(data);
+  updatedContent.value = JSON.stringify(data.blocks);
 }
 
 const route = useRoute();
