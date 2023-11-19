@@ -7,19 +7,20 @@ import RawTool from "@editorjs/raw";
 import Checklist from "@editorjs/checklist";
 import Embed from "@editorjs/embed";
 import Quote from "@editorjs/quote";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 
 const props = defineProps({
   body: {
     type: String,
-    default: "[]",
+    default: "{}",
   },
 });
 
 const emit = defineEmits(["onChange"]);
 
 const editor = ref<any>(null);
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
   editor.value = new EditorJS({
     holder: "block-editor-container",
     placeholder: "Let`s write an awesome story!",
@@ -44,11 +45,7 @@ onMounted(() => {
         },
       },
     },
-    onReady: () => {
-      editor.value.render({
-        blocks: JSON.parse(props.body || "[]"),
-      });
-    },
+    data: JSON.parse(props.body || "{}"),
     onChange: (api: any, event: any) =>
       emit("onChange", api, event, editor.value),
   });

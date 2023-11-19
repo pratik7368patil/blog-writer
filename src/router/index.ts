@@ -42,7 +42,9 @@ const routes = [
   {
     name: "home",
     path: "/",
-    component: { template: `<div>Home Page</div>` },
+    redirect: () => {
+      return { name: "login" };
+    },
     ...authRequired(),
   },
   {

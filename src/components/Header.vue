@@ -6,12 +6,11 @@ import { user } from "../stores/user";
 
 async function createNewBlankPost() {
   const timestamp = new Date().getTime();
-  const newBlog = await createNewBlog({
+  await createNewBlog({
     title: `Untitled-${timestamp}`,
-    body: JSON.stringify([]),
+    body: JSON.stringify({}),
     userId: user.current.$id,
   });
-  console.log(newBlog);
 }
 </script>
 <template>
