@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { getAllBlogs } from "./../db/index";
-import { onMounted, ref } from "vue";
+import { getAllBlogs, deleteBlog } from "./../db/index";
+import { posts } from "../stores/posts";
+import { onMounted, computed } from "vue";
+import dayjs from "dayjs";
 
 const router = useRouter();
 
@@ -14,17 +16,21 @@ function redirectToBlog(id: string) {
   });
 }
 
-const allBlogs = ref<any>([]);
-
 onMounted(async () => {
-  allBlogs.value = await getAllBlogs();
+  await getAllBlogs();
 });
+
+const allPosts = computed(() => {
+  return posts.getPosts();
+});
+
+async function handleDelete(id: string) {
+  await deleteBlog(id);
+}
 </script>
 <template>
   <div class="w-full flex justify-center mt-4">
-    <div
-      class="overflow-x-auto rounded-lg border border-gray-200 w-3/4 max-w-4xl"
-    >
+    <div class="overflow-x-auto rounded-lg border border-gray-200 w-10/12">
       <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
         <thead class="ltr:text-left rtl:text-right">
           <tr>
@@ -52,29 +58,35 @@ onMounted(async () => {
         </thead>
 
         <tbody class="divide-y divide-gray-200">
-          <tr v-for="blog in allBlogs" :key="blog.id">
+          <tr v-for="blog in allPosts" :key="blog.$id">
             <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
               {{ blog.title }}
             </td>
             <td class="whitespace-nowrap px-4 py-2 text-gray-700">
-              {{ blog.createdAt }}
+              {{ dayjs(blog.$createdAt).format("MMM D, YYYY h:mm A") }}
             </td>
             <td class="whitespace-nowrap px-4 py-2 text-gray-700">
-              {{ blog.updatedAt }}
+              {{ dayjs(blog.$updatedAt).format("MMM D, YYYY h:mm A") }}
             </td>
             <td class="whitespace-nowrap px-4 py-2">
               <button
-                @click="() => redirectToBlog(blog.id)"
-                class="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700"
+                @click="() => redirectToBlog(blog.$id)"
+                class="inline-block rounded bg-indigo-50 text-indigo-600 px-4 py-2 text-xs font-medium hover:bg-indigo-100"
               >
                 View
+              </button>
+              <button
+                @click="() => handleDelete(blog.$id)"
+                class="inline-block rounded bg-red-600 px-4 py-2 text-xs font-medium text-white hover:bg-red-500 ml-2"
+              >
+                Delete
               </button>
             </td>
           </tr>
         </tbody>
       </table>
       <div
-        v-if="!allBlogs.length"
+        v-if="!allPosts.length"
         class="py-2 block w-full text-center text-xs font-medium"
       >
         No blogs found!

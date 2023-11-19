@@ -1,15 +1,39 @@
 <script setup lang="ts">
 import BlockEditor from "./BlockEditor.vue";
 import BlogNav from "./BlogNav.vue";
-async function onChange(api: any, event: any, instance: any) {
-  console.log(api);
-  console.log(event);
+import { useRoute } from "vue-router";
+import { getBlogById, updateBlog } from "../db/index";
+import { computed, onMounted, ref } from "vue";
+
+const updatedContent = ref<string>("");
+async function onChange(__: any, _: any, instance: any) {
   const data = await instance.save();
-  console.log(data);
+  console.log(JSON.stringify(data));
+  updatedContent.value = JSON.stringify(data);
+}
+
+const route = useRoute();
+const blogId = computed((): string => {
+  return (route.params?.id || "") as string;
+});
+
+const currentBlog = ref<any>({});
+const loading = ref<boolean>(false);
+onMounted(async () => {
+  loading.value = true;
+  currentBlog.value = await getBlogById(blogId.value);
+  loading.value = false;
+});
+
+async function handleSave() {
+  await updateBlog(blogId.value, { body: updatedContent.value });
 }
 </script>
 
 <template>
-  <BlogNav />
-  <BlockEditor @on-change="onChange" />
+  <div v-if="loading">Loading...</div>
+  <div v-else>
+    <BlogNav :title="currentBlog.title" @save="handleSave" />
+    <BlockEditor @on-change="onChange" :body="currentBlog.body" />
+  </div>
 </template>

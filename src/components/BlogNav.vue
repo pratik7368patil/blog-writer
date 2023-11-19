@@ -1,4 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps({
+  title: {
+    type: String,
+    default: "Article Title",
+  },
+});
+
+const emit = defineEmits(["save", "preview"]);
+</script>
 <template>
   <header class="bg-white">
     <div
@@ -20,16 +29,18 @@
       </a>
 
       <div class="flex flex-1 items-center justify-end md:justify-between">
-        <nav aria-label="Global" class="hidden md:block">Article Title</nav>
+        <nav aria-label="Global" class="hidden md:block">{{ title }}</nav>
 
         <div class="flex items-center gap-4">
           <div class="sm:flex sm:gap-4">
             <button
+              @click="() => emit('preview')"
               class="hidden rounded-md bg-indigo-50 px-5 py-2.5 text-sm font-medium text-indigo-600 transition hover:text-indigo-600/75 sm:block"
             >
               Preview
             </button>
             <button
+              @click="() => emit('save')"
               class="block rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-400 text-white hover:text-white"
             >
               Save

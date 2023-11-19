@@ -9,6 +9,13 @@ import Embed from "@editorjs/embed";
 import Quote from "@editorjs/quote";
 import { onMounted, ref } from "vue";
 
+const props = defineProps({
+  body: {
+    type: String,
+    default: "[]",
+  },
+});
+
 const emit = defineEmits(["onChange"]);
 
 const editor = ref<any>(null);
@@ -36,6 +43,11 @@ onMounted(() => {
           defaultStyle: "unordered",
         },
       },
+    },
+    onReady: () => {
+      editor.value.render({
+        blocks: JSON.parse(props.body),
+      });
     },
     onChange: (api: any, event: any) =>
       emit("onChange", api, event, editor.value),

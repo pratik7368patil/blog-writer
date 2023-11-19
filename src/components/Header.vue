@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { createNewBlog } from "./../db/index";
+import { user } from "../stores/user";
 // import { useRouter } from "vue-router";
 // const router = useRouter();
 
 async function createNewBlankPost() {
-  const timestamp = new Date().toString();
+  const timestamp = new Date().getTime();
   const newBlog = await createNewBlog({
     title: `Untitled-${timestamp}`,
-    body: [],
+    body: "",
+    userId: user.current.$id,
   });
   console.log(newBlog);
 }

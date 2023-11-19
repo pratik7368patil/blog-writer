@@ -1,14 +1,17 @@
-import { Client, Databases, ID } from "appwrite";
+import { Client, Databases, Account, ID, Query } from "appwrite";
 const projectId = import.meta.env.VITE_PROJECT_ID;
 const dbId = import.meta.env.VITE_DB_ID;
 const collectionId = import.meta.env.VITE_COLLECTION_ID;
+import { posts } from "../stores/posts";
 
 const client = new Client();
 client.headers = {
   ...client.headers,
   "X-Appwrite-Project": projectId,
 };
-const databases = new Databases(client);
+
+export const account = new Account(client);
+export const databases = new Databases(client);
 
 export function initDb() {
   client.setEndpoint("https://cloud.appwrite.io/v1").setProject(projectId);
@@ -16,7 +19,11 @@ export function initDb() {
 
 export async function getAllBlogs() {
   try {
-    return await databases.listDocuments(dbId, collectionId);
+    const data = await databases.listDocuments(dbId, collectionId, [
+      Query.select(["$id", "title"]),
+    ]);
+    posts.init(data.documents);
+    return data;
   } catch (error) {
     console.error("Error while fetching all blogs: ", error);
     return [];
@@ -25,12 +32,14 @@ export async function getAllBlogs() {
 
 export async function createNewBlog(payload: any) {
   try {
-    return await databases.createDocument(
+    const newBlog = await databases.createDocument(
       dbId,
       collectionId,
       ID.unique(),
       payload
     );
+    posts.addNewPost(newBlog);
+    return newBlog;
   } catch (error) {
     console.error("Error while creating new blog: ", error);
     return false;
@@ -48,7 +57,8 @@ export async function updateBlog(blogId: string, payload: any) {
 
 export async function deleteBlog(blogId: string) {
   try {
-    return await databases.deleteDocument(dbId, collectionId, blogId);
+    await databases.deleteDocument(dbId, collectionId, blogId);
+    posts.deletePostById(blogId);
   } catch (error) {
     console.error("Error while deleting blog: ", error);
     return false;
