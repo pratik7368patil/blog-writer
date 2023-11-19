@@ -8,7 +8,7 @@ async function createNewBlankPost() {
   const timestamp = new Date().getTime();
   const newBlog = await createNewBlog({
     title: `Untitled-${timestamp}`,
-    body: "",
+    body: JSON.stringify([]),
     userId: user.current.$id,
   });
   console.log(newBlog);
